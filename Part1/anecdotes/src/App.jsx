@@ -26,31 +26,29 @@ const App = () => {
     
     const [selected, setSelected] = useState(0)
     const [votes, setVotes] = useState(new Array(8).fill(0))
-    console.log(votes)
     const [maxIndex, setMaxIndex] = useState(0)
-    console.log(maxIndex)
 
+    const updateMax = (arr) => {
+        let newMax = maxIndex
+        const keyArray = Object.keys(arr)
+        for (let i = 0; i < keyArray.length; i++) {
+            if (arr[i] > arr[newMax]) {
+                newMax = i
+            }
+        }
+        return newMax
+    }
+    
     const handleVoteClick = () => {
         const copy = {...votes}
         copy[selected] += 1
-        let newMax = maxIndex
-        console.log('before for loop')
-        console.log(copy)
-        const keyArray = Object.keys(copy)
-        for (let i = 0; i < keyArray.length; i++) {
-            console.log('start of for loop')
-            if (copy[i] > copy[newMax]) {
-                newMax = i
-                console.log('for loop: newMax %d maxIndex %d', newMax, maxIndex)
-            }
-        }
-            setVotes(copy)
-            setMaxIndex(newMax)
-        }
+        setVotes(copy)
+        setMaxIndex(updateMax(copy))
+    }
 
     const handleAnecdoteClick = () => {
-            setSelected(Math.floor(Math.random() * 8))
-        }
+        setSelected(Math.floor(Math.random() * 8))
+    }
     
     
     return (
@@ -64,7 +62,7 @@ const App = () => {
             </div>
             <Header text='Anecdote with most votes' />
             {anecdotes[maxIndex]}
-            <p>has {votes[maxIndex]} votes</p>
+            <p>Has {votes[maxIndex]} Votes</p>
         </div>
   )
 }
