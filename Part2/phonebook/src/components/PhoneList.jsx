@@ -8,7 +8,6 @@ const PhoneList = ({persons, filter}) => {
         )
     }
     else {
-        console.log('hello from phone list with empty filter');
         return (
             <ul>
                 {persons.map(person => <li key={person.id}>{person.name} {person.number}</li>)}
