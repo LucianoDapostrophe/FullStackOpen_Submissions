@@ -1,48 +1,41 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import axios from 'axios'
 import PhoneList from './components/PhoneList'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 
 function App() {
-  const [persons, setPersons] = useState([
-    { 
-      name: 'Arto Hellas',
-      number: '040-1234567',
-      id: 1
-    },
-    {
-      name: 'art blart',
-      number: '555-5555',
-      id: 2
-    },
-    {
-      name: 'archie jughead',
-      number: '778-123 4567',
-      id: 3
-    },
-    {
-      name: 'bob',
-      number: '123456789',
-      id: 4
-    }
-  ])
+
+  const [persons, setPersons] = useState([])
   const [filter, setFilter] = useState('')
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
 
+  useEffect(() => {
+    console.log('effect');
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        console.log('promise fulfilled')
+        setPersons(response.data)
+      })
+  }, [])
+  console.log('render', persons.length, 'notes');
+  
+  
   const addPerson = (event) => {
     event.preventDefault()
     if (persons.find(person => person.name === newName)) {
       alert(`${newName} is already added to phonebook`)
     }
     else {
-        const personObject = {
-          name: newName,
-          number: newNumber,
-          id: String(persons.length + 1)
-        }
-        setPersons(persons.concat(personObject))
-        setNewName('')
+      const personObject = {
+        name: newName,
+        number: newNumber,
+        id: String(persons.length + 1)
+      }
+      setPersons(persons.concat(personObject))
+      setNewName('')
         setNewNumber('')
     }
   }
