@@ -39,12 +39,14 @@ function App() {
     }
   }
 
-  const deletePerson = (id) => { 
-    personService
-      .remove(id)
-      .then(deletedPerson => {
-        setPersons(persons.filter(person => person.id !== deletedPerson.id))
-      })
+  const deletePerson = (person) => { 
+    if (window.confirm(`Delete ${person.name}?`)) {
+      personService
+        .remove(person.id)
+        .then(deletedPerson => {
+          setPersons(persons.filter(person => person.id !== deletedPerson.id))
+        })
+    }
   }
 
   const handleNameChange = (event) => {
@@ -58,7 +60,7 @@ function App() {
     setFilter(event.target.value)
   }
   
-  const personsToShow  = filter != '' 
+  const personsToShow = filter != '' 
   ? persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase())) 
   : persons
 
@@ -73,7 +75,7 @@ function App() {
       <table>
         <tbody>
           {personsToShow.map(person => 
-            <PhoneListItem key={person.id} person={person} onDelete={() => deletePerson(person.id)} />)}
+            <PhoneListItem key={person.id} person={person} onDelete={() => deletePerson(person)} />)}
         </tbody>
       </table>
     </div>
