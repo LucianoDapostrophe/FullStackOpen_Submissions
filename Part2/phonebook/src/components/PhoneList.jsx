@@ -1,19 +1,11 @@
-const PhoneList = ({persons, filter}) => {
-    if (filter != '') {
-        const filteredPersons = persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()));
-        return (
-            <ul>
-                {filteredPersons.map(person => <li key={person.id}>{person.name} {person.number}</li>)}
-            </ul>
-        )
-    }
-    else {
-        return (
-            <ul>
-                {persons.map(person => <li key={person.id}>{person.name} {person.number}</li>)}
-            </ul>
-        )
-    }
+const PhoneListItem = ({person, onDelete}) => {
+    return (
+        <tr key={person.id}>
+            <td>{person.name}</td>
+            <td>{person.number}</td>
+            <td><button onClick={onDelete}>Delete</button></td>
+        </tr>
+    )
 }
 
-export default PhoneList
+export default PhoneListItem

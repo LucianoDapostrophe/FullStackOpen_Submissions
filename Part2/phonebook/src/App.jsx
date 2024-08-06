@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import personService from './services/persons'
-import PhoneList from './components/PhoneList'
+import PhoneListItem from './components/PhoneList'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
 
@@ -12,16 +12,12 @@ function App() {
   const [newNumber, setNewNumber] = useState('')
 
   useEffect(() => {
-    console.log('effect');
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
+    personService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
       })
   }, [])
-  console.log('render', persons.length, 'notes');
-  
   
   const addPerson = (event) => {
     event.preventDefault()
@@ -32,12 +28,23 @@ function App() {
       const personObject = {
         name: newName,
         number: newNumber,
-        id: String(persons.length + 1)
       }
-      setPersons(persons.concat(personObject))
-      setNewName('')
+      personService
+      .create(personObject)
+      .then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
+        setNewName('')
         setNewNumber('')
+      })
     }
+  }
+
+  const deletePerson = (id) => { 
+    personService
+      .remove(id)
+      .then(deletedPerson => {
+        setPersons(persons.filter(person => person.id !== deletedPerson.id))
+      })
   }
 
   const handleNameChange = (event) => {
@@ -50,6 +57,10 @@ function App() {
   const handleFilterChange = (event) => {
     setFilter(event.target.value)
   }
+  
+  const personsToShow  = filter != '' 
+  ? persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase())) 
+  : persons
 
   return (
     <div>
@@ -59,7 +70,12 @@ function App() {
       <PersonForm onSubmit={addPerson} name={newName} number={newNumber} 
         handleNameChange={handleNameChange} handleNumberChange={handleNumberChange} />
       <h2>Numbers</h2>
-      <PhoneList persons={persons} filter={filter} />
+      <table>
+        <tbody>
+          {personsToShow.map(person => 
+            <PhoneListItem key={person.id} person={person} onDelete={() => deletePerson(person.id)} />)}
+        </tbody>
+      </table>
     </div>
   )
 }
