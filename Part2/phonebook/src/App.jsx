@@ -3,6 +3,7 @@ import personService from './services/persons'
 import PhoneListItem from './components/PhoneList'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
+import Notification from './components/Notification'
 
 function App() {
 
@@ -10,6 +11,7 @@ function App() {
   const [filter, setFilter] = useState('')
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
+  const [notificationMessage, setNotificationMessagee] = useState('')
 
   useEffect(() => {
     personService
@@ -31,9 +33,13 @@ function App() {
             setPersons(persons.map(old => old.id === updatedPerson.id ? updatedPerson : old))
             setNewName('')
             setNewNumber('')
+            setNotificationMessagee(`${updatedPerson.name} updated number to ${updatedPerson.number}.`)
+            setTimeout( () => {
+              setNotificationMessagee('')
+            }, 5000)
           })
+        }
       }
-    }
     else {
       const personObject = {
         name: newName,
@@ -45,6 +51,10 @@ function App() {
         setPersons(persons.concat(returnedPerson))
         setNewName('')
         setNewNumber('')
+        setNotificationMessagee(`${returnedPerson.name} added to the phonebook.`)
+        setTimeout( () => {
+          setNotificationMessagee('')
+        }, 5000)
       })
     }
   }
@@ -55,6 +65,10 @@ function App() {
         .remove(person.id)
         .then(deletedPerson => {
           setPersons(persons.filter(person => person.id !== deletedPerson.id))
+          setNotificationMessagee(`${deletedPerson.name} deleted from phonebook.`)
+          setTimeout( () => {
+            setNotificationMessagee('')
+          }, 5000)
         })
     }
   }
@@ -77,6 +91,7 @@ function App() {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={notificationMessage} />
       <Filter filter={filter} handleChange={handleFilterChange} />
       <h2>Add New</h2>
       <PersonForm onSubmit={addPerson} name={newName} number={newNumber} 
