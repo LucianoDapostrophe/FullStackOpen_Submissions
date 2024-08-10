@@ -12,6 +12,7 @@ function App() {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [notificationMessage, setNotificationMessagee] = useState('')
+  const [errorFlag, setErrorFlag] = useState(false)
 
   useEffect(() => {
     personService
@@ -36,6 +37,14 @@ function App() {
             setNotificationMessagee(`${updatedPerson.name} updated number to ${updatedPerson.number}.`)
             setTimeout( () => {
               setNotificationMessagee('')
+            }, 5000)
+          })
+          .catch(error => {
+            setErrorFlag(true)
+            setNotificationMessagee(`Information of ${personObject.name} has already been deleted from the server.`)
+            setTimeout( () => {
+              setNotificationMessagee('')
+              setErrorFlag(false)
             }, 5000)
           })
         }
@@ -91,7 +100,7 @@ function App() {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={notificationMessage} />
+      <Notification message={notificationMessage} error={errorFlag}/>
       <Filter filter={filter} handleChange={handleFilterChange} />
       <h2>Add New</h2>
       <PersonForm onSubmit={addPerson} name={newName} number={newNumber} 
