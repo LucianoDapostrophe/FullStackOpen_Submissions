@@ -24,30 +24,9 @@ function App() {
   
   const addPerson = (event) => {
     event.preventDefault()
-    const updatePerson = persons.find(person => person.name === newName)
-    if (updatePerson) {
-      if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
-        const personObject = {...updatePerson, number : newNumber}
-        personService
-          .update(personObject.id, personObject)
-          .then(updatedPerson => {
-            setPersons(persons.map(old => old.id === updatedPerson.id ? updatedPerson : old))
-            setNewName('')
-            setNewNumber('')
-            setNotificationMessagee(`${updatedPerson.name} updated number to ${updatedPerson.number}.`)
-            setTimeout( () => {
-              setNotificationMessagee('')
-            }, 5000)
-          })
-          .catch(error => {
-            setErrorFlag(true)
-            setNotificationMessagee(`Information of ${personObject.name} has already been deleted from the server.`)
-            setTimeout( () => {
-              setNotificationMessagee('')
-              setErrorFlag(false)
-            }, 5000)
-          })
-        }
+    const checkUpdatePerson = persons.find(person => person.name === newName)
+    if (checkUpdatePerson) {
+          updatePerson(checkUpdatePerson)
       }
     else {
       const personObject = {
@@ -58,14 +37,37 @@ function App() {
       .create(personObject)
       .then(returnedPerson => {
         setPersons(persons.concat(returnedPerson))
-        setNewName('')
-        setNewNumber('')
         setNotificationMessagee(`${returnedPerson.name} added to the phonebook.`)
         setTimeout( () => {
           setNotificationMessagee('')
         }, 5000)
       })
     }
+    setNewName('')
+    setNewNumber('')
+  }
+
+  const updatePerson  = (updatePerson) => {
+    if (window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)) {
+      const personObject = {...updatePerson, number : newNumber}
+      personService
+        .update(personObject.id, personObject)
+        .then(updatedPerson => {
+          setPersons(persons.map(old => old.id === updatedPerson.id ? updatedPerson : old))
+          setNotificationMessagee(`${updatedPerson.name} updated number to ${updatedPerson.number}.`)
+          setTimeout( () => {
+            setNotificationMessagee('')
+          }, 5000)
+        })
+        .catch(error => {
+          setErrorFlag(true)
+          setNotificationMessagee(`Information of ${personObject.name} has already been deleted from the server.`)
+          setTimeout( () => {
+            setNotificationMessagee('')
+            setErrorFlag(false)
+          }, 5000)
+        })
+      }
   }
 
   const deletePerson = (person) => { 
